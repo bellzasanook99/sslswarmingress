@@ -1,0 +1,5 @@
+# Ignore Let's Encrypt certificates
+/letsencrypt/
+traefik-certificates/
+acme.json
+*.pem
