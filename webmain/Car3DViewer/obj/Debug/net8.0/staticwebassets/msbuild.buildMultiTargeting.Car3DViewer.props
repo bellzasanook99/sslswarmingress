@@ -1,0 +1,3 @@
+﻿<Project>
+  <Import Project="../build/Car3DViewer.props" />
+</Project>

@@ -1,0 +1,26 @@
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+WORKDIR /src
+
+# คัดลอกเฉพาะไฟล์ที่จำเป็นสำหรับ restore
+COPY ["WebCore/WebCore.csproj", "WebCore/"]
+RUN dotnet restore "WebCore/WebCore.csproj"
+
+# คัดลอกไฟล์ทั้งหมด (รวม wwwroot)
+COPY . .
+WORKDIR "/src/WebCore"
+RUN dotnet build "WebCore.csproj" -c Release -o /app/build
+
+# Publish (ต้องแน่ใจว่า include wwwroot)
+FROM build AS publish
+RUN dotnet publish "WebCore.csproj" -c Release -o /app/publish /p:UseAppHost=false
+
+# ใช้ runtime image
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS final
+WORKDIR /app
+COPY --from=publish /app/publish .
+
+# เปิดพอร์ตและรันแอป
+ENV ASPNETCORE_ENVIRONMENT=Production
+ENV ASPNETCORE_URLS=http://+:80
+EXPOSE 80
+ENTRYPOINT ["dotnet", "WebCore.dll"]

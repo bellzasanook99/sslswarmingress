@@ -1,0 +1,23 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v8.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v8.0": {
+      "Car3DViewer/1.0.0": {
+        "runtime": {
+          "Car3DViewer.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "Car3DViewer/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}
