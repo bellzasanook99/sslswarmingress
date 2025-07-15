@@ -43,9 +43,11 @@ services:
       - traefik-publicnew
 
   main-site:
-    image: farmingrobotic/webmain:2.0  # ควรตั้งชื่อ image ที่ชัดเจน swarm จะใช้ image ที่ build ไว้แล้ว
+    image: farmingrobotic/webcore:latest  # ควรตั้งชื่อ image ที่ชัดเจน swarm จะใช้ image ที่ build ไว้แล้ว
     volumes:
       - ./nginx/webmain.conf:/etc/ngcdinx/conf.d/default.conf
+      # - ./uploads:/app/wwwroot/uploads
+      # - ./processed:/app/wwwroot/processed
     environment:
       - ASPNETCORE_ENVIRONMENT=Production  # เปลี่ยนจาก Development เป็น Production
       - ASPNETCORE_URLS=http://+:80

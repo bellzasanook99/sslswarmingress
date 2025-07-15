@@ -36,6 +36,21 @@ app.MapGet("/weatherforecast", () =>
 .WithName("GetWeatherForecast")
 .WithOpenApi();
 
+
+app.MapGet("/processed-images", () =>
+{
+    var processedFolder = Path.Combine("wwwroot", "processed");
+    
+    if (!Directory.Exists(processedFolder))
+    {
+        return Results.NotFound("No processed images directory found");
+    }
+
+    return Results.Ok(imageFiles);
+})
+.WithName("GetProcessedImages")
+.WithOpenApi();
+
 app.Run();
 
 record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)

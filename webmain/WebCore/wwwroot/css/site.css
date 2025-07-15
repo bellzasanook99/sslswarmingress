@@ -48,3 +48,24 @@ h1 {
 .btn-primary:hover {
     background-color: #b71c1c;
 }
+
+       @keyframes shake {
+            0%, 100% { transform: translate(-50%, -50%) rotate(0deg); }
+            25% { transform: translate(-50%, -50%) rotate(1deg); }
+            75% { transform: translate(-50%, -50%) rotate(-1deg); }
+        }
+        
+        @keyframes orbit {
+            from { transform: rotate(0deg) translateX(100px) rotate(0deg); }
+            to { transform: rotate(360deg) translateX(100px) rotate(-360deg); }
+        }
+        
+        @keyframes twinkle {
+            from { opacity: 0.3; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes glow {
+            from { text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 15px #5b9eff, 0 0 20px #5b9eff; }
+            to { text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #5b9eff, 0 0 40px #5b9eff; }
+        }
