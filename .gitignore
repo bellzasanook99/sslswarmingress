@@ -1,6 +1,7 @@
 # Ignore Let's Encrypt certificates
 /letsencrypt/
 traefik-certificates/
-/wwwroot/music/
+/webmain/wwwroot/music/
+/FileDocker/
 acme.json
 *.pem
