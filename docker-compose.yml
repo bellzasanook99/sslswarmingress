@@ -46,8 +46,7 @@ services:
     image: farmingrobotic/webcore:latest  # ควรตั้งชื่อ image ที่ชัดเจน swarm จะใช้ image ที่ build ไว้แล้ว
     volumes:
       - ./nginx/webmain.conf:/etc/ngcdinx/conf.d/default.conf
-      # - ./uploads:/app/wwwroot/uploads
-      # - ./processed:/app/wwwroot/processed
+      - ./webmain/WebCore/wwwroot/music:/app/wwwroot/music:ro
     environment:
       - ASPNETCORE_ENVIRONMENT=Production  # เปลี่ยนจาก Development เป็น Production
       - ASPNETCORE_URLS=http://+:80
@@ -144,6 +143,7 @@ services:
 
 volumes:
   traefik-certificates:
+
 
 networks:
   traefik-publicnew:

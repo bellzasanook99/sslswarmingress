@@ -68,10 +68,57 @@
             animation: twinkle 2s infinite alternate;
         }
         
-
+      /* Audio element styling */
+        .audio-element {
+            display: none;
+        }
+        
+        /* Play overlay */
+        .play-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.9);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            z-index: 1000;
+        }
+        
+        .play-button {
+            padding: 15px 30px;
+            font-size: 18px;
+            background: #5b9eff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
     </style>
 </head>
 <body>
+
+
+    <!-- Audio element -->
+    <audio id="backgroundMusic" class="audio-element" loop>
+         <source src="/music/FristDemo.mp3?v=${Date.now()}" type="audio/mpeg" id="musicSource">
+    </audio>
+
+    <!-- Play overlay -->
+    <div class="play-overlay" id="playOverlay">
+        <h2>Welcome to Our Experience</h2>
+        <p>For the best experience, we recommend enabling background music</p>
+        <button class="play-button" id="playButton">Enable Audio</button>
+    </div>
+
+
+
+
     <div class="space-container">
         <div class="space">
             <div class="planet"></div>
@@ -83,26 +130,66 @@
     </div>
 
     <script>
-        // สร้างดาวแบบสุ่ม
-        const space = document.querySelector('.space');
-        for (let i = 0; i < 50; i++) {
-            const star = document.createElement('div');
-            star.classList.add('star');
+            document.addEventListener('DOMContentLoaded', function() {
+            const audio = document.getElementById('backgroundMusic');
+            const playOverlay = document.getElementById('playOverlay');
+            const mainContent = document.getElementById('mainContent');
+            const playButton = document.getElementById('playButton');
+            const musicSource = document.getElementById('musicSource')
+            // Set initial volume (optional)
+            audio.volume = 0.7;
             
-            // ขนาดสุ่ม
-            const size = Math.random() * 3;
-            star.style.width = `${size}px`;
-            star.style.height = `${size}px`;
+            // Handle play button click
+            playButton.addEventListener('click', function() {
+                audio.play().then(() => {
+                    // Success - hide overlay and show content
+                    playOverlay.style.display = 'none';
+                    mainContent.style.display = 'flex';
+                    
+                    // Store preference in localStorage
+                    localStorage.setItem('audioPreference', 'enabled');
+                }).catch(error => {
+                    console.error('Audio playback failed:', error);
+                    playButton.textContent = 'Error - Click to Try Again';
+                });
+            });
             
-            // ตำแหน่งสุ่ม
-            star.style.left = `${Math.random() * 100}%`;
-            star.style.top = `${Math.random() * 100}%`;
-            
-            // ความเร็วการกระพริบสุ่ม
-            star.style.animationDuration = `${2 + Math.random() * 3}s`;
-            
-            space.appendChild(star);
+            // Check if user previously enabled audio
+            if (localStorage.getItem('audioPreference') === 'enabled') {
+                playButton.click();
+            }
+
+
+               // Function to reload audio with cache busting
+        function reloadAudio() {
+            musicSource.src = `/music/FristDemo.mp3?v=${Date.now()}`;
+            audio.load(); // Force reload the audio element
+            return audio.play();
         }
+        
+        // Handle play button click
+        document.getElementById('playButton').addEventListener('click', function() {
+            reloadAudio().then(() => {
+                // Success handling
+            }).catch(error => {
+                console.error('Audio playback failed:', error);
+            });
+        });
+            
+            // Your existing star generation code
+            const space = document.querySelector('.space');
+            for (let i = 0; i < 50; i++) {
+                const star = document.createElement('div');
+                star.classList.add('star');
+                const size = Math.random() * 3;
+                star.style.width = `${size}px`;
+                star.style.height = `${size}px`;
+                star.style.left = `${Math.random() * 100}%`;
+                star.style.top = `${Math.random() * 100}%`;
+                star.style.animationDuration = `${2 + Math.random() * 3}s`;
+                space.appendChild(star);
+            }
+        });
     </script>
 </body>
 </html>
