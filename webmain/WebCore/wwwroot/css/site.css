@@ -49,23 +49,106 @@ h1 {
     background-color: #b71c1c;
 }
 
-       @keyframes shake {
-            0%, 100% { transform: translate(-50%, -50%) rotate(0deg); }
-            25% { transform: translate(-50%, -50%) rotate(1deg); }
-            75% { transform: translate(-50%, -50%) rotate(-1deg); }
+
+
+
+
+
+
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .music-controls {
+        padding: 6px 15px;
+        border-radius: 40px;
+    }
+    
+    .music-btn {
+        width: 40px;
+        height: 40px;
+        font-size: 16px;
+    }
+    
+    .music-btn.play-pause {
+        width: 46px;
+        height: 46px;
+    }
+    
+    .song-info {
+        font-size: 13px;
+        max-width: 150px;
+        margin: 0 10px;
+    }
+    
+    .volume-slider {
+        width: 60px;
+    }
+}
+
+@media (max-width: 480px) {
+    .music-controls {
+        padding: 5px 12px;
+    }
+    
+    .song-info {
+        font-size: 12px;
+        max-width: 120px;
+    }
+    
+    .volume-control span {
+        display: none;
+    }
+    
+    .volume-slider {
+        width: 50px;
+    }
+}
+
+
+
+
+
+
+
+
+           /* Animations */
+        @keyframes orbit-rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
         
-        @keyframes orbit {
-            from { transform: rotate(0deg) translateX(100px) rotate(0deg); }
-            to { transform: rotate(360deg) translateX(100px) rotate(-360deg); }
+        @keyframes sun-pulse {
+            0%, 100% { transform: scale(1); box-shadow: 0 0 50px #ff6600; }
+            50% { transform: scale(1.05); box-shadow: 0 0 70px #ff6600; }
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(5deg); }
+            75% { transform: rotate(-5deg); }
+        }
+        
+        @keyframes ufo-float {
+            0% { transform: translateX(-50%) translateY(-5px); }
+            100% { transform: translateX(-50%) translateY(5px); }
+        }
+        
+        @keyframes comet-pulse {
+            0% { transform: translateX(-50%) scale(1); }
+            100% { transform: translateX(-50%) scale(1.1); }
+        }
+        
+        @keyframes tail-grow {
+            0% { transform: scaleX(0.8); opacity: 0.8; }
+            100% { transform: scaleX(1.2); opacity: 1; }
         }
         
         @keyframes twinkle {
-            from { opacity: 0.3; }
-            to { opacity: 1; }
+            0% { opacity: 0.3; }
+            100% { opacity: 1; }
         }
         
         @keyframes glow {
-            from { text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 15px #5b9eff, 0 0 20px #5b9eff; }
-            to { text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #5b9eff, 0 0 40px #5b9eff; }
+            0% { text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 15px #5b9eff, 0 0 20px #5b9eff; }
+            100% { text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #5b9eff, 0 0 40px #5b9eff; }
         }

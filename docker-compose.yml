@@ -40,7 +40,7 @@ services:
       - --entrypoints.websecure.forwardedheaders.insecure
       - --entrypoints.web.forwardedheaders.insecure
     networks:
-      - traefik-publicnew
+      - mynetwork
 
   main-site:
     image: farmingrobotic/webcore:latest  # ควรตั้งชื่อ image ที่ชัดเจน swarm จะใช้ image ที่ build ไว้แล้ว
@@ -80,7 +80,7 @@ services:
       restart_policy:
         condition: on-failure
     networks:
-        - traefik-publicnew
+        - mynetwork
       
         
   ingress:
@@ -109,7 +109,7 @@ services:
       restart_policy:
         condition: on-failure
     networks:
-      - traefik-publicnew
+      - mynetwork
 
   webapi:
     image: farmingrobotic/webapi:latest  # ควรตั้งชื่อ image ที่ชัดเจน swarm จะใช้ image ที่ build ไว้แล้ว
@@ -139,13 +139,13 @@ services:
         - "traefik.http.routers.webapi.tls.domains[0].main=farmingrobotic.com"
         - "traefik.http.routers.webapi.tls.domains[0].sans=www.farmingrobotic.com"
     networks:
-      - traefik-publicnew
+      - mynetwork
 
 volumes:
   traefik-certificates:
 
 
 networks:
-  traefik-publicnew:
+  mynetwork:
     driver: overlay
     attachable: true

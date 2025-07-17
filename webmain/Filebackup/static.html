@@ -1,0 +1,362 @@
+@page
+@model IndexModel
+<!DOCTYPE html>
+<html>
+<head>
+    <title>อนิเมชั่นอวกาศมินิมอล</title>
+    <style>
+        body {
+            background-color: #000;
+            margin: 0;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            font-family: Arial, sans-serif;
+        }
+        
+        .space-container {
+            display: flex;
+            width: 100%;
+            justify-content: space-around;
+            align-items: center;
+            flex-grow: 1;
+        }
+        
+        .space {
+            position: relative;
+            width: 300px;
+            height: 300px;
+        }
+        
+        .website-text {
+            color: white;
+            font-size: 24px;
+            text-align: right;
+            padding-right: 50px;
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+        
+        .planet {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            background: radial-gradient(circle at 30% 30%, #5b9eff, #003366);
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            box-shadow: 0 0 30px #5b9eff;
+            animation: shake 5s infinite ease-in-out;
+        }
+        
+        .moon {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            background: #ddd;
+            border-radius: 50%;
+            top: 30%;
+            left: 80%;
+            animation: orbit 10s linear infinite, shake 3s infinite ease-in-out;
+        }
+        
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle 2s infinite alternate;
+        }
+        
+        /* Audio element styling */
+        .audio-element {
+            display: none;
+        }
+        
+        /* Play overlay */
+        .play-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.9);
+            display: hidden;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            z-index: 1000;
+        }
+        
+        .play-button {
+            padding: 15px 30px;
+            font-size: 18px;
+            background: #5b9eff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+        
+        /* Music controls */
+        .music-controls {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 10px 20px;
+            border-radius: 30px;
+            z-index: 100;
+        }
+        
+        .music-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+        
+        .music-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        .music-btn.play-pause {
+            background: #5b9eff;
+        }
+        
+        .music-btn.play-pause:hover {
+            background: #4a8de6;
+        }
+        
+        .song-info {
+            color: white;
+            font-size: 14px;
+            margin: 0 15px;
+            min-width: 200px;
+            text-align: center;
+        }
+        
+        .volume-control {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .volume-slider {
+            width: 80px;
+        }
+        
+  
+    </style>
+</head>
+<body>
+    <!-- Audio element -->
+    <audio id="backgroundMusic" class="audio-element">
+        <!-- Source will be set by JavaScript -->
+    </audio>
+
+    <!-- Play overlay -->
+    <div class="play-overlay" id="playOverlay">
+        <h2>Welcome to Our Experience</h2>
+        <p>For the best experience, we recommend enabling background music</p>
+        <button class="play-button" id="playButton">Enable Audio</button>
+    </div>
+
+    <div class="space-container">
+        <div class="space">
+            <div class="planet"></div>
+            <div class="moon"></div>
+            <!-- สร้างดาวด้วย JavaScript -->
+        </div>
+        
+        <div class="website-text">farmingrobotic.com</div>
+    </div>
+
+    <!-- Music controls -->
+    <div class="music-controls" id="musicControls" style="display: none;">
+        <button class="music-btn prev" title="Previous song">⏮</button>
+        <button class="music-btn play-pause" title="Play/Pause">▶</button>
+        <button class="music-btn next" title="Next song">⏭</button>
+        <div class="song-info" id="songInfo">No song playing</div>
+        <div class="volume-control">
+            <span>🔈</span>
+            <input type="range" class="volume-slider" min="0" max="1" step="0.01" value="0.7">
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const audio = document.getElementById('backgroundMusic');
+            const playOverlay = document.getElementById('playOverlay');
+            const playButton = document.getElementById('playButton');
+            const musicControls = document.getElementById('musicControls');
+            const songInfo = document.getElementById('songInfo');
+            const playPauseBtn = document.querySelector('.music-btn.play-pause');
+            const prevBtn = document.querySelector('.music-btn.prev');
+            const nextBtn = document.querySelector('.music-btn.next');
+            const volumeSlider = document.querySelector('.volume-slider');
+            
+            // ตัวแปรเก็บรายชื่อไฟล์เพลงและสถานะปัจจุบัน
+            let musicFiles = [];
+            let currentSongIndex = 0;
+            let isPlaying = false;
+            
+            // ตั้งค่าระดับเสียงเริ่มต้น
+            audio.volume = 0.7;
+            volumeSlider.value = 0.7;
+            
+            // ดึงรายชื่อไฟล์เพลงจากเซิร์ฟเวอร์
+            async function fetchMusicFiles() {
+                try {
+                    // ใช้ API ของคุณเองหรือแก้ไขตามโครงสร้างเซิร์ฟเวอร์
+                    // ตัวอย่างนี้ใช้การจำลองข้อมูล
+                    const response = await fetch('/api/music/files');
+                    if (response.ok) {
+                        musicFiles = await response.json();
+                    } else {
+                        // Fallback หาก API ไม่ทำงาน
+                        musicFiles = ['FristDemo.mp3', 'FristDemo_b.mp3', 'FristDemo_a.mp3'];
+                    }
+                    console.log('Loaded music files:', musicFiles);
+                } catch (error) {
+                    console.error('Failed to fetch music files:', error);
+                    musicFiles = ['FristDemo.mp3']; // Fallback ไฟล์เริ่มต้น
+                }
+            }
+            
+            // เล่นเพลงตาม index
+            async function playSong(index) {
+                if (musicFiles.length === 0) return;
+                
+                // ตรวจสอบขอบเขต index
+                if (index < 0) index = musicFiles.length - 1;
+                if (index >= musicFiles.length) index = 0;
+                
+                currentSongIndex = index;
+                const song = musicFiles[currentSongIndex];
+                
+                // อัพเดทข้อมูลเพลง
+                songInfo.textContent = song.replace('.mp3', '');
+                
+                // ตั้งค่าแหล่งเพลงใหม่
+                audio.src = `/music/${song}?v=${Date.now()}`;
+                
+                try {
+                    await audio.play();
+                    isPlaying = true;
+                    playPauseBtn.textContent = '⏸';
+                    updateMusicControlsVisibility();
+                } catch (error) {
+                    console.error('Audio playback failed:', error);
+                    isPlaying = false;
+                    playPauseBtn.textContent = '▶';
+                }
+            }
+            
+            // เล่นเพลงถัดไป
+            function playNextSong() {
+                playSong(currentSongIndex + 1);
+            }
+            
+            // เล่นเพลงก่อนหน้า
+            function playPrevSong() {
+                playSong(currentSongIndex - 1);
+            }
+            
+            // ควบคุมการแสดงผลของปุ่มควบคุมเพลง
+            function updateMusicControlsVisibility() {
+                if (musicFiles.length > 0 && localStorage.getItem('audioPreference') === 'enabled') {
+                    musicControls.style.display = 'flex';
+                } else {
+                    musicControls.style.display = 'none';
+                }
+            }
+            
+            // เมื่อเพลงจบ ให้เล่นเพลงถัดไป
+            audio.addEventListener('ended', playNextSong);
+            
+            // เมื่อคลิกปุ่มเล่น/หยุด
+            playPauseBtn.addEventListener('click', function() {
+                if (isPlaying) {
+                    audio.pause();
+                    isPlaying = false;
+                    playPauseBtn.textContent = '▶';
+                } else {
+                    audio.play().then(() => {
+                        isPlaying = true;
+                        playPauseBtn.textContent = '⏸';
+                    });
+                }
+            });
+            
+            // เมื่อคลิกปุ่มเพลงถัดไป
+            nextBtn.addEventListener('click', playNextSong);
+            
+            // เมื่อคลิกปุ่มเพลงก่อนหน้า
+            prevBtn.addEventListener('click', playPrevSong);
+            
+            // เมื่อปรับระดับเสียง
+            volumeSlider.addEventListener('input', function() {
+                audio.volume = this.value;
+            });
+            
+            // เมื่อคลิกปุ่มเปิดเพลงครั้งแรก
+            playButton.addEventListener('click', async function() {
+                try {
+                    await fetchMusicFiles();
+                    if (musicFiles.length > 0) {
+                        await playSong(0);
+                        playOverlay.style.display = 'none';
+                        localStorage.setItem('audioPreference', 'enabled');
+                        updateMusicControlsVisibility();
+                    } else {
+                        throw new Error('No music files available');
+                    }
+                } catch (error) {
+                    console.error('Audio playback failed:', error);
+                    playButton.textContent = 'Error - Click to Try Again';
+                }
+            });
+            
+            // ตรวจสอบการตั้งค่าก่อนหน้า
+            if (localStorage.getItem('audioPreference') === 'enabled') {
+                fetchMusicFiles().then(() => {
+                    if (musicFiles.length > 0) {
+                        playButton.click();
+                    }
+                });
+            }
+            
+            // สร้างดาว
+            const space = document.querySelector('.space');
+            for (let i = 0; i < 50; i++) {
+                const star = document.createElement('div');
+                star.classList.add('star');
+                const size = Math.random() * 3;
+                star.style.width = `${size}px`;
+                star.style.height = `${size}px`;
+                star.style.left = `${Math.random() * 100}%`;
+                star.style.top = `${Math.random() * 100}%`;
+                star.style.animationDuration = `${2 + Math.random() * 3}s`;
+                space.appendChild(star);
+            }
+        });
+    </script>
+</body>
+</html>
