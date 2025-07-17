@@ -10,3 +10,5 @@ network:
 	docker network create --driver overlay mynetwork
 networkprune:
 	docker network prune	
+test:
+	docker images
